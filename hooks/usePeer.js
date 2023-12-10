@@ -1,14 +1,25 @@
-const { useState, useEffect } = require("react");
+const { useState, useEffect, useRef } = require("react");
 
 function usePeer() {
-  const [peerId, setPeerId] = useState();
+  const [peer, setPeer] = useState();
   const [myId, setMyId] = useState();
+  const isPeerSet = useRef(false);
 
   useEffect(() => {
+    if (isPeerSet.current) return;
+    isPeerSet.current = true;
     (async function initPeer() {
-      const peer = new (await import("peerjs")).default();
+      const myPeer = new (await import("peerjs")).default();
+      setPeer(myPeer);
+
+      myPeer.on("open", (id) => {
+        console.log(`Your peer id is ${id}`);
+        setMyId(id);
+      });
     })();
   }, []);
+
+  return { peer, myId };
 }
 
 export default usePeer;
