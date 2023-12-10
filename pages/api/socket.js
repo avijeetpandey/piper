@@ -8,7 +8,7 @@ function SocketHandler(req, res) {
     res.socket.server.io = io;
 
     io.on("connection", (socket) => {
-      console.log("Socket connected");
+      console.log("Socket connected on backend");
     });
   }
   res.end();

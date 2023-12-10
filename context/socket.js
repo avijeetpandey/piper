@@ -4,26 +4,24 @@ import { io } from "socket.io-client";
 const SocketContext = createContext(null);
 
 export function useSocket() {
-  const socket = useContext(SocketContext);
-  return socket;
+  const socketConnection = useContext(SocketContext);
+  return socketConnection;
 }
 
 export function SocketProvider({ children }) {
-  const [connection, setConnection] = useState(null);
+  const [socket, setSocket] = useState();
 
   useEffect(() => {
     const connection = io();
-    setConnection(connection);
+    setSocket(connection);
   }, []);
 
-  connection?.on("connect_error", async (err) => {
-    console.log("Error establishing connection");
+  socket?.on("connect_error", async (err) => {
+    console.log("Error establishing connection", err);
     await fetch("api/socket");
   });
 
   return (
-    <SocketContext.Provider value={connection}>
-      {children}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );
 }
